@@ -39,10 +39,33 @@ export default function Home() {
     navigator.clipboard.writeText(answer);
   }
 
-  function shareStupidity() {
-    const text = `Natural Stupidity™ says:\n\n"${answer}"\n\nConfidently Wrong Since 2026.`;
-    navigator.clipboard.writeText(text);
+  async function shareStupidity() {
+  const text = `🧠 Natural Stupidity™
+
+Q: ${question}
+
+A: ${answer}
+
+Try it yourself:
+https://natural-stupidity.vercel.app
+
+Confidently Wrong Since 2026.`;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: "Natural Stupidity™",
+        text,
+        url: "https://natural-stupidity.vercel.app",
+      });
+    } else {
+      await navigator.clipboard.writeText(text);
+      alert("📋 Stupidity copied to clipboard!");
+    }
+  } catch (error) {
+    console.error(error);
   }
+}
 
   async function generateBadAdvice() {
     if (!question.trim() || isLoading) return;
