@@ -8,6 +8,8 @@ const loadingMessages = [
   "🎲 Generating confidence...",
   "💡 Inventing nonsense...",
   "📉 Consulting fake experts...",
+  "🦆 Asking a duck for strategy...",
+  "🥔 Auditing potato wisdom...",
 ];
 
 const experts = [
@@ -16,9 +18,38 @@ const experts = [
   "👔 Corporate Chaos Consultant",
   "🧠 Certified Overthinker",
   "📉 Financial Disaster Intern",
+  "🚀 Space Lawyer",
+  "🥔 Potato Investment Guru",
+  "🦆 Duck Strategy Analyst",
+  "👽 Alien Life Coach",
+  "🍕 Pizza Philosopher",
+  "🐒 Chief Monkey Officer",
+  "🧻 Toilet Paper Economist",
+  "🎩 Master of Wrong Answers",
+  "🦖 Jurassic Consultant",
+  "🤖 Malfunctioning AI",
 ];
 
-const hallOfFame = [
+const randomQuestions = [
+  "How do I become rich in 4 minutes?",
+  "How do I impress aliens?",
+  "How can I read faster?",
+  "How do I become invisible?",
+  "How can I win every argument?",
+  "How do I become famous accidentally?",
+  "How can I look smarter in meetings?",
+  "How do I make my cat respect me?",
+];
+
+const dailyBadIdeas = [
+  "Start every meeting by challenging the printer to a duel.",
+  "Save money by paying bills with confidence instead of cash.",
+  "Learn faster by sleeping directly on your keyboard.",
+  "Become productive by staring at your calendar until it apologizes.",
+  "Improve your diet by negotiating with your fridge.",
+];
+
+const initialHallOfFame = [
   "Invest your savings in decorative potatoes.",
   "Read faster by skipping every third word.",
   "Become rich by refusing to understand money.",
@@ -35,9 +66,15 @@ export default function Home() {
   const [answer, setAnswer] = useState("");
   const [expert, setExpert] = useState("🤓 Professor Nonsense");
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [hallOfFame, setHallOfFame] = useState(initialHallOfFame);
   const [isLoading, setIsLoading] = useState(false);
   const [counter, setCounter] = useState(1247);
+  const [legendaryCount, setLegendaryCount] = useState(73);
+  const [peakCount, setPeakCount] = useState(21);
   const [rating, setRating] = useState("");
+  const [dailyIdea] = useState(
+    dailyBadIdeas[Math.floor(Math.random() * dailyBadIdeas.length)]
+  );
 
   function pickRandom<T>(items: T[]) {
     return items[Math.floor(Math.random() * items.length)];
@@ -70,6 +107,24 @@ Confidently Wrong Since 2026.`;
       await navigator.clipboard.writeText(text);
       alert("📤 Stupidity copied for sharing!");
     }
+  }
+
+  function surpriseMe() {
+    setQuestion(pickRandom(randomQuestions));
+  }
+
+  function recordLegendary() {
+    if (!answer) return;
+    setLegendaryCount((prev) => prev + 1);
+    setRating("⭐ Legendary stupidity recorded.");
+    setHallOfFame((prev) => [answer, ...prev.slice(0, 4)]);
+  }
+
+  function recordPeak() {
+    if (!answer) return;
+    setPeakCount((prev) => prev + 1);
+    setRating("🤡 Peak stupidity achieved.");
+    setHallOfFame((prev) => [answer, ...prev.slice(0, 4)]);
   }
 
   async function generateBadAdvice() {
@@ -177,28 +232,37 @@ Rewrite the answer based on this feedback.`,
       style={{
         minHeight: "100vh",
         background:
-          "radial-gradient(circle at top, #312e81 0%, #111827 38%, #030712 100%)",
+          "radial-gradient(circle at top, #4c1d95 0%, #111827 38%, #030712 100%)",
         color: "white",
         textAlign: "center",
         fontFamily: "Arial",
-        padding: "40px 20px",
+        padding: "38px 20px",
       }}
     >
-      <h1 style={{ fontSize: "64px", marginBottom: "10px" }}>
-        🧠🤦 Natural Stupidity™
-      </h1>
+      <div style={logoWrap}>
+        <div style={logoBadge}>NS</div>
+        <div>
+          <h1 style={title}>Natural Stupidity™</h1>
+          <p style={tagline}>
+            The internet&apos;s most confident source of terrible advice.
+          </p>
+        </div>
+      </div>
 
-      <h2 style={{ color: "#c4b5fd", marginBottom: "20px" }}>
-        Confidently Wrong Since 2026.
-      </h2>
-
-      <p style={{ fontSize: "18px" }}>
+      <p style={{ fontSize: "18px", marginTop: "25px" }}>
         Ask anything. Receive terrible advice with dangerous confidence.
       </p>
 
-      <p style={{ color: "#a78bfa", fontWeight: "bold" }}>
-        🧠 {counter.toLocaleString()} terrible decisions generated worldwide
-      </p>
+      <div style={statsGrid}>
+        <div style={statCard}>🧠 {counter.toLocaleString()} terrible decisions</div>
+        <div style={statCard}>⭐ {legendaryCount} legendary answers</div>
+        <div style={statCard}>🤡 {peakCount} peak stupidity moments</div>
+      </div>
+
+      <div style={dailyCard}>
+        <strong>💡 Today&apos;s Bad Idea:</strong>
+        <p style={{ marginBottom: 0 }}>{dailyIdea}</p>
+      </div>
 
       <textarea
         value={question}
@@ -211,20 +275,7 @@ Rewrite the answer based on this feedback.`,
         }}
         placeholder="Ask your question..."
         rows={4}
-        style={{
-          width: "80%",
-          maxWidth: "760px",
-          padding: "18px",
-          fontSize: "18px",
-          borderRadius: "16px",
-          marginTop: "12px",
-          backgroundColor: "#111827",
-          color: "white",
-          border: "2px solid #a78bfa",
-          outline: "none",
-          boxShadow: "0 0 22px rgba(167, 139, 250, 0.45)",
-          resize: "vertical",
-        }}
+        style={textareaStyle}
       />
 
       <br />
@@ -233,35 +284,22 @@ Rewrite the answer based on this feedback.`,
         onClick={generateBadAdvice}
         disabled={!question.trim() || isLoading}
         style={{
-          marginTop: "22px",
-          padding: "16px 34px",
-          fontSize: "20px",
-          fontWeight: "bold",
+          ...mainButton,
           backgroundColor: isLoading ? "#6b7280" : "#8b5cf6",
-          color: "white",
-          border: "none",
-          borderRadius: "14px",
           cursor: isLoading ? "not-allowed" : "pointer",
-          boxShadow: "0 10px 25px rgba(139, 92, 246, 0.35)",
         }}
       >
         {isLoading ? "Please wait badly..." : "Generate Bad Advice"}
       </button>
 
+      <button onClick={surpriseMe} style={surpriseButton}>
+        🎰 Surprise Me
+      </button>
+
       {answer && (
-        <div
-          style={{
-            maxWidth: "760px",
-            margin: "34px auto",
-            padding: "24px",
-            backgroundColor: "rgba(31, 41, 55, 0.86)",
-            borderRadius: "18px",
-            border: "1px solid rgba(167, 139, 250, 0.35)",
-            boxShadow: "0 20px 45px rgba(0,0,0,0.35)",
-          }}
-        >
+        <div style={answerCard}>
           <strong>{expert} says:</strong>
-          <p style={{ fontSize: "18px", lineHeight: "1.5" }}>{answer}</p>
+          <p style={{ fontSize: "19px", lineHeight: "1.55" }}>{answer}</p>
 
           {showActionButtons && (
             <>
@@ -296,56 +334,34 @@ Rewrite the answer based on this feedback.`,
                   🤮 Too Smart
                 </button>
 
-                <button
-                  onClick={() => setRating("⭐ Legendary stupidity recorded.")}
-                  style={ratingButton}
-                >
+                <button onClick={recordLegendary} style={ratingButton}>
                   ⭐ Legendary
                 </button>
 
-                <button
-                  onClick={() => setRating("🤡 Peak stupidity achieved.")}
-                  style={ratingButton}
-                >
+                <button onClick={recordPeak} style={ratingButton}>
                   🤡 Peak Stupidity
                 </button>
               </div>
 
-              {rating && (
-                <p style={{ color: "#c4b5fd", marginTop: "12px" }}>
-                  {rating}
-                </p>
-              )}
+              {rating && <p style={ratingText}>{rating}</p>}
             </>
           )}
         </div>
       )}
 
-      <section
-        style={{
-          maxWidth: "760px",
-          margin: "30px auto",
-          textAlign: "left",
-        }}
-      >
-        <h3 style={{ color: "#c4b5fd" }}>🏆 Hall of Fame</h3>
+      <section style={sectionStyle}>
+        <h3 style={sectionTitle}>🏆 Hall of Fame</h3>
 
         {hallOfFame.map((item, index) => (
           <div key={index} style={listCard}>
-            {index + 1}. {item}
+            <strong>{index + 1}.</strong> {item}
           </div>
         ))}
       </section>
 
       {history.length > 0 && (
-        <section
-          style={{
-            maxWidth: "760px",
-            margin: "20px auto",
-            textAlign: "left",
-          }}
-        >
-          <h3 style={{ color: "#c4b5fd" }}>Recent Bad Decisions</h3>
+        <section style={sectionStyle}>
+          <h3 style={sectionTitle}>Recent Bad Decisions</h3>
 
           {history.map((item, index) => (
             <div key={index} style={listCard}>
@@ -363,6 +379,125 @@ Rewrite the answer based on this feedback.`,
     </main>
   );
 }
+
+const logoWrap = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: "18px",
+  flexWrap: "wrap" as const,
+};
+
+const logoBadge = {
+  width: "110px",
+  height: "110px",
+  borderRadius: "32px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "42px",
+  fontWeight: "900",
+  letterSpacing: "-2px",
+  background:
+    "linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #f97316 100%)",
+  color: "white",
+  boxShadow:
+    "0 0 20px rgba(139,92,246,0.7), 0 0 50px rgba(236,72,153,0.4)",
+  border: "1px solid rgba(255,255,255,0.25)",
+};
+
+const title = {
+  fontSize: "72px",
+  margin: 0,
+  letterSpacing: "-3px",
+  fontWeight: "900",
+};
+
+const tagline = {
+  color: "#ddd6fe",
+  marginTop: "8px",
+  fontWeight: "bold",
+  fontSize: "18px",
+};
+
+const statsGrid = {
+  maxWidth: "850px",
+  margin: "24px auto",
+  display: "flex",
+  gap: "12px",
+  justifyContent: "center",
+  flexWrap: "wrap" as const,
+};
+
+const statCard = {
+  padding: "12px 16px",
+  backgroundColor: "rgba(17, 24, 39, 0.72)",
+  border: "1px solid rgba(167,139,250,0.28)",
+  borderRadius: "999px",
+  color: "#ddd6fe",
+  fontWeight: "bold",
+};
+
+const dailyCard = {
+  maxWidth: "760px",
+  margin: "22px auto",
+  padding: "16px",
+  borderRadius: "16px",
+  backgroundColor: "rgba(76, 29, 149, 0.35)",
+  border: "1px solid rgba(167,139,250,0.35)",
+  boxShadow: "0 12px 35px rgba(0,0,0,0.25)",
+};
+
+const textareaStyle = {
+  width: "80%",
+  maxWidth: "760px",
+  padding: "18px",
+  fontSize: "18px",
+  borderRadius: "18px",
+  marginTop: "12px",
+  backgroundColor: "#111827",
+  color: "white",
+  border: "2px solid #a78bfa",
+  outline: "none",
+  boxShadow: "0 0 26px rgba(167, 139, 250, 0.55)",
+  resize: "vertical" as const,
+};
+
+const mainButton = {
+  marginTop: "22px",
+  marginRight: "10px",
+  padding: "16px 34px",
+  fontSize: "20px",
+  fontWeight: "bold",
+  color: "white",
+  border: "none",
+  borderRadius: "16px",
+  boxShadow: "0 10px 28px rgba(139, 92, 246, 0.45)",
+};
+
+const surpriseButton = {
+  marginTop: "22px",
+  padding: "16px 24px",
+  fontSize: "18px",
+  fontWeight: "bold",
+  backgroundColor: "#db2777",
+  color: "white",
+  border: "none",
+  borderRadius: "16px",
+  cursor: "pointer",
+  boxShadow: "0 10px 28px rgba(219, 39, 119, 0.35)",
+};
+
+const answerCard = {
+  maxWidth: "760px",
+  margin: "34px auto",
+  padding: "26px",
+  backgroundColor: "rgba(31, 41, 55, 0.82)",
+  borderRadius: "22px",
+  border: "1px solid rgba(167, 139, 250, 0.4)",
+  boxShadow: "0 24px 55px rgba(0,0,0,0.4)",
+  backdropFilter: "blur(10px)",
+};
 
 const smallButton = {
   marginTop: "10px",
@@ -385,6 +520,22 @@ const ratingButton = {
   border: "none",
   borderRadius: "10px",
   cursor: "pointer",
+};
+
+const ratingText = {
+  color: "#c4b5fd",
+  marginTop: "12px",
+  fontWeight: "bold",
+};
+
+const sectionStyle = {
+  maxWidth: "760px",
+  margin: "30px auto",
+  textAlign: "left" as const,
+};
+
+const sectionTitle = {
+  color: "#c4b5fd",
 };
 
 const listCard = {
