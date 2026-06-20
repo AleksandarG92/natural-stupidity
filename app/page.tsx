@@ -18,6 +18,12 @@ const experts = [
   "📉 Financial Disaster Intern",
 ];
 
+const hallOfFame = [
+  "Invest your savings in decorative potatoes.",
+  "Read faster by skipping every third word.",
+  "Become rich by refusing to understand money.",
+];
+
 type HistoryItem = {
   question: string;
   answer: string;
@@ -30,6 +36,8 @@ export default function Home() {
   const [expert, setExpert] = useState("🤓 Professor Nonsense");
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [counter, setCounter] = useState(1247);
+  const [rating, setRating] = useState("");
 
   function pickRandom<T>(items: T[]) {
     return items[Math.floor(Math.random() * items.length)];
@@ -37,10 +45,11 @@ export default function Home() {
 
   function copyAdvice() {
     navigator.clipboard.writeText(answer);
+    alert("📋 Advice copied!");
   }
 
   async function shareStupidity() {
-  const text = `🧠 Natural Stupidity™
+    const text = `🧠 Natural Stupidity™
 
 Q: ${question}
 
@@ -51,7 +60,6 @@ https://natural-stupidity.vercel.app
 
 Confidently Wrong Since 2026.`;
 
-  try {
     if (navigator.share) {
       await navigator.share({
         title: "Natural Stupidity™",
@@ -60,18 +68,16 @@ Confidently Wrong Since 2026.`;
       });
     } else {
       await navigator.clipboard.writeText(text);
-      alert("📋 Stupidity copied to clipboard!");
+      alert("📤 Stupidity copied for sharing!");
     }
-  } catch (error) {
-    console.error(error);
   }
-}
 
   async function generateBadAdvice() {
     if (!question.trim() || isLoading) return;
 
     try {
       setIsLoading(true);
+      setRating("");
 
       const randomMessage = pickRandom(loadingMessages);
       const randomExpert = pickRandom(experts);
@@ -95,6 +101,7 @@ Confidently Wrong Since 2026.`;
       }
 
       setAnswer(data.answer);
+      setCounter((prev) => prev + 1);
 
       setHistory((prev) => [
         {
@@ -116,6 +123,7 @@ Confidently Wrong Since 2026.`;
 
     try {
       setIsLoading(true);
+      setRating("");
       setAnswer("🎲 Generating extra stupidity...");
 
       const response = await fetch("/api/stupidity", {
@@ -142,6 +150,7 @@ Rewrite the answer based on this feedback.`,
       }
 
       setAnswer(data.answer);
+      setCounter((prev) => prev + 1);
 
       setHistory((prev) => [
         {
@@ -175,22 +184,20 @@ Rewrite the answer based on this feedback.`,
         padding: "40px 20px",
       }}
     >
-      <h1
-        style={{
-          fontSize: "64px",
-          marginBottom: "10px",
-          letterSpacing: "-2px",
-        }}
-      >
+      <h1 style={{ fontSize: "64px", marginBottom: "10px" }}>
         🧠🤦 Natural Stupidity™
       </h1>
 
-      <h2 style={{ color: "#c4b5fd", marginBottom: "30px" }}>
+      <h2 style={{ color: "#c4b5fd", marginBottom: "20px" }}>
         Confidently Wrong Since 2026.
       </h2>
 
-      <p style={{ fontSize: "18px", marginBottom: "22px" }}>
+      <p style={{ fontSize: "18px" }}>
         Ask anything. Receive terrible advice with dangerous confidence.
+      </p>
+
+      <p style={{ color: "#a78bfa", fontWeight: "bold" }}>
+        🧠 {counter.toLocaleString()} terrible decisions generated worldwide
       </p>
 
       <textarea
@@ -236,7 +243,6 @@ Rewrite the answer based on this feedback.`,
           borderRadius: "14px",
           cursor: isLoading ? "not-allowed" : "pointer",
           boxShadow: "0 10px 25px rgba(139, 92, 246, 0.35)",
-          transform: isLoading ? "scale(1)" : "scale(1.02)",
         }}
       >
         {isLoading ? "Please wait badly..." : "Generate Bad Advice"}
@@ -259,36 +265,11 @@ Rewrite the answer based on this feedback.`,
 
           {showActionButtons && (
             <>
-              <button
-                onClick={copyAdvice}
-                style={{
-                  marginTop: "10px",
-                  marginRight: "10px",
-                  padding: "10px 18px",
-                  fontSize: "14px",
-                  backgroundColor: "#374151",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "10px",
-                  cursor: "pointer",
-                }}
-              >
+              <button onClick={copyAdvice} style={smallButton}>
                 📋 Copy Advice
               </button>
 
-              <button
-                onClick={shareStupidity}
-                style={{
-                  marginTop: "10px",
-                  padding: "10px 18px",
-                  fontSize: "14px",
-                  backgroundColor: "#374151",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "10px",
-                  cursor: "pointer",
-                }}
-              >
+              <button onClick={shareStupidity} style={smallButton}>
                 📤 Share Stupidity
               </button>
 
@@ -299,16 +280,7 @@ Rewrite the answer based on this feedback.`,
                       "Make it more stupid, more absurd, and funnier."
                     )
                   }
-                  style={{
-                    marginRight: "10px",
-                    padding: "10px 14px",
-                    fontSize: "14px",
-                    backgroundColor: "#4b5563",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "10px",
-                    cursor: "pointer",
-                  }}
+                  style={ratingButton}
                 >
                   😂 More Stupid
                 </button>
@@ -319,26 +291,54 @@ Rewrite the answer based on this feedback.`,
                       "The answer was too smart. Make it dumber and more ridiculous."
                     )
                   }
-                  style={{
-                    padding: "10px 14px",
-                    fontSize: "14px",
-                    backgroundColor: "#4b5563",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "10px",
-                    cursor: "pointer",
-                  }}
+                  style={ratingButton}
                 >
                   🤮 Too Smart
                 </button>
+
+                <button
+                  onClick={() => setRating("⭐ Legendary stupidity recorded.")}
+                  style={ratingButton}
+                >
+                  ⭐ Legendary
+                </button>
+
+                <button
+                  onClick={() => setRating("🤡 Peak stupidity achieved.")}
+                  style={ratingButton}
+                >
+                  🤡 Peak Stupidity
+                </button>
               </div>
+
+              {rating && (
+                <p style={{ color: "#c4b5fd", marginTop: "12px" }}>
+                  {rating}
+                </p>
+              )}
             </>
           )}
         </div>
       )}
 
+      <section
+        style={{
+          maxWidth: "760px",
+          margin: "30px auto",
+          textAlign: "left",
+        }}
+      >
+        <h3 style={{ color: "#c4b5fd" }}>🏆 Hall of Fame</h3>
+
+        {hallOfFame.map((item, index) => (
+          <div key={index} style={listCard}>
+            {index + 1}. {item}
+          </div>
+        ))}
+      </section>
+
       {history.length > 0 && (
-        <div
+        <section
           style={{
             maxWidth: "760px",
             margin: "20px auto",
@@ -348,24 +348,13 @@ Rewrite the answer based on this feedback.`,
           <h3 style={{ color: "#c4b5fd" }}>Recent Bad Decisions</h3>
 
           {history.map((item, index) => (
-            <div
-              key={index}
-              style={{
-                marginTop: "12px",
-                padding: "14px",
-                backgroundColor: "rgba(17, 24, 39, 0.8)",
-                borderRadius: "12px",
-                border: "1px solid rgba(255,255,255,0.08)",
-              }}
-            >
+            <div key={index} style={listCard}>
               <strong>{item.expert}</strong>
-              <p style={{ marginBottom: "6px", color: "#d1d5db" }}>
-                Q: {item.question}
-              </p>
-              <p style={{ marginTop: 0 }}>A: {item.answer}</p>
+              <p style={{ color: "#d1d5db" }}>Q: {item.question}</p>
+              <p>A: {item.answer}</p>
             </div>
           ))}
-        </div>
+        </section>
       )}
 
       <p style={{ marginTop: "40px", fontSize: "13px", color: "#d1d5db" }}>
@@ -374,3 +363,34 @@ Rewrite the answer based on this feedback.`,
     </main>
   );
 }
+
+const smallButton = {
+  marginTop: "10px",
+  marginRight: "10px",
+  padding: "10px 18px",
+  fontSize: "14px",
+  backgroundColor: "#374151",
+  color: "white",
+  border: "none",
+  borderRadius: "10px",
+  cursor: "pointer",
+};
+
+const ratingButton = {
+  margin: "5px",
+  padding: "10px 14px",
+  fontSize: "14px",
+  backgroundColor: "#4b5563",
+  color: "white",
+  border: "none",
+  borderRadius: "10px",
+  cursor: "pointer",
+};
+
+const listCard = {
+  marginTop: "12px",
+  padding: "14px",
+  backgroundColor: "rgba(17, 24, 39, 0.8)",
+  borderRadius: "12px",
+  border: "1px solid rgba(255,255,255,0.08)",
+};
