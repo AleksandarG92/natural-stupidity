@@ -107,20 +107,18 @@ export default function Home() {
   const [streak, setStreak] = useState(1);
   const [achievement, setAchievement] = useState("");
   const [roastMode, setRoastMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
 
-  const [dailyIdea] = useState(
-    dailyBadIdeas[Math.floor(Math.random() * dailyBadIdeas.length)]
-  );
-
-  const [worstDaily] = useState(
-    worstAdviceOfTheDay[Math.floor(Math.random() * worstAdviceOfTheDay.length)]
-  );
+  const [dailyIdea, setDailyIdea] = useState("");
+  const [worstDaily, setWorstDaily] = useState("");
 
   function pickRandom<T>(items: T[]) {
     return items[Math.floor(Math.random() * items.length)];
   }
 
   useEffect(() => {
+    setDailyIdea(pickRandom(dailyBadIdeas));
+    setWorstDaily(pickRandom(worstAdviceOfTheDay));
     const saved = localStorage.getItem(STORAGE_KEY);
 
     if (saved) {
@@ -318,7 +316,21 @@ Rewrite the answer based on this feedback.`,
     answer !== "🎲 Generating extra stupidity...";
 
   return (
-    <main style={mainStyle}>
+    <main
+  style={{
+    ...mainStyle,
+    background: darkMode
+      ? "radial-gradient(circle at top, #4c1d95 0%, #111827 38%, #030712 100%)"
+      : "linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%)",
+    color: darkMode ? "white" : "#111827",
+  }}
+>
+      <button
+  onClick={() => setDarkMode((prev) => !prev)}
+  style={themeButton}
+>
+  {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+</button>
       <div style={logoWrap}>
         <div style={logoBadge}>NS</div>
         <div>
@@ -365,7 +377,11 @@ Rewrite the answer based on this feedback.`,
             : "Ask your question..."
         }
         rows={4}
-        style={textareaStyle}
+        style={{
+  ...textareaStyle,
+  backgroundColor: darkMode ? "#111827" : "#ffffff",
+  color: darkMode ? "white" : "#111827",
+}}
       />
 
       <br />
@@ -399,7 +415,13 @@ Rewrite the answer based on this feedback.`,
       {achievement && <div style={achievementCard}>{achievement}</div>}
 
       {answer && (
-        <div style={answerCard}>
+        <div style={{
+  ...answerCard,
+  backgroundColor: darkMode
+    ? "rgba(31,41,55,0.82)"
+    : "rgba(255,255,255,0.92)",
+  color: darkMode ? "white" : "#111827",
+}}>
           <strong>{expert} says:</strong>
           <p style={{ fontSize: "19px", lineHeight: "1.55" }}>{answer}</p>
 
@@ -496,9 +518,15 @@ Rewrite the answer based on this feedback.`,
         ))}
       </section>
 
-      <p style={{ marginTop: "40px", fontSize: "13px", color: "#d1d5db" }}>
-        Satire only. Do not follow this advice. Seriously.
-      </p>
+      <footer style={footerStyle}>
+  <p>© 2026 Natural Stupidity™. All rights reserved.</p>
+
+  <p>Satire only. Do not follow this advice. Seriously.</p>
+
+  <p>
+    Made with questionable intelligence 🧠
+  </p>
+</footer>
     </main>
   );
 }
@@ -689,4 +717,26 @@ const listCard = {
   backgroundColor: "rgba(17, 24, 39, 0.8)",
   borderRadius: "12px",
   border: "1px solid rgba(255,255,255,0.08)",
+};
+const footerStyle = {
+  maxWidth: "900px",
+  margin: "70px auto 0",
+  paddingTop: "28px",
+  borderTop: "1px solid rgba(255,255,255,0.12)",
+  color: "#d1d5db",
+  fontSize: "14px",
+  textAlign: "center" as const,
+};
+const themeButton = {
+  position: "fixed" as const,
+  top: "18px",
+  right: "18px",
+  zIndex: 10,
+  padding: "10px 14px",
+  borderRadius: "999px",
+  border: "1px solid rgba(255,255,255,0.18)",
+  backgroundColor: "rgba(17, 24, 39, 0.72)",
+  color: "white",
+  cursor: "pointer",
+  fontWeight: "bold",
 };
