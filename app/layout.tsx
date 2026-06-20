@@ -18,6 +18,10 @@ export const metadata: Metadata = {
   description:
     "The funniest AI-powered bad advice generator on the internet. Ask anything and receive hilariously terrible advice with dangerous confidence.",
 
+  icons: {
+    icon: "/favicon.ico",
+  },
+
   keywords: [
     "AI",
     "Artificial Intelligence",
@@ -87,9 +91,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        {children}
-      </body>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }
