@@ -49,10 +49,40 @@ const dailyBadIdeas = [
   "Improve your diet by negotiating with your fridge.",
 ];
 
+const worstAdviceOfTheDay = [
+  "Quit your job and become a professional cloud negotiator.",
+  "Put your phone in rice before every important call, just to intimidate it.",
+  "To save fuel, drive only downhill. Physics will understand.",
+  "Become more confident by correcting strangers in languages you do not speak.",
+  "Invest in invisible furniture. It saves space and ruins friendships.",
+];
+
+const testimonials = [
+  {
+    text: "I followed one tip and my toaster now manages my finances.",
+    author: "Mark, confused homeowner",
+  },
+  {
+    text: "This app helped me make decisions faster and worse.",
+    author: "Elena, former planner",
+  },
+  {
+    text: "My cat became CEO after three clicks.",
+    author: "Steve, unemployed pet owner",
+  },
+];
+
 const initialHallOfFame = [
   "Invest your savings in decorative potatoes.",
   "Read faster by skipping every third word.",
   "Become rich by refusing to understand money.",
+];
+
+const leaderboard = [
+  "🥔 Potato Guru — 912 stupidity points",
+  "🦆 Duck Strategy Analyst — 811 stupidity points",
+  "👽 Alien Life Coach — 799 stupidity points",
+  "📉 Financial Disaster Intern — 734 stupidity points",
 ];
 
 type HistoryItem = {
@@ -60,7 +90,9 @@ type HistoryItem = {
   answer: string;
   expert: string;
 };
+
 const STORAGE_KEY = "natural-stupidity-stats";
+
 export default function Home() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
@@ -72,36 +104,48 @@ export default function Home() {
   const [legendaryCount, setLegendaryCount] = useState(73);
   const [peakCount, setPeakCount] = useState(21);
   const [rating, setRating] = useState("");
+  const [streak, setStreak] = useState(1);
+  const [achievement, setAchievement] = useState("");
+  const [roastMode, setRoastMode] = useState(false);
+
   const [dailyIdea] = useState(
     dailyBadIdeas[Math.floor(Math.random() * dailyBadIdeas.length)]
   );
-useEffect(() => {
-  const saved = localStorage.getItem(STORAGE_KEY);
 
-  if (saved) {
-    const data = JSON.parse(saved);
-
-    setCounter(data.counter ?? 1247);
-    setLegendaryCount(data.legendaryCount ?? 73);
-    setPeakCount(data.peakCount ?? 21);
-    setHallOfFame(data.hallOfFame ?? initialHallOfFame);
-  }
-}, []);
-
-useEffect(() => {
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify({
-      counter,
-      legendaryCount,
-      peakCount,
-      hallOfFame,
-    })
+  const [worstDaily] = useState(
+    worstAdviceOfTheDay[Math.floor(Math.random() * worstAdviceOfTheDay.length)]
   );
-}, [counter, legendaryCount, peakCount, hallOfFame]);
+
   function pickRandom<T>(items: T[]) {
     return items[Math.floor(Math.random() * items.length)];
   }
+
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if (saved) {
+      const data = JSON.parse(saved);
+
+      setCounter(data.counter ?? 1247);
+      setLegendaryCount(data.legendaryCount ?? 73);
+      setPeakCount(data.peakCount ?? 21);
+      setHallOfFame(data.hallOfFame ?? initialHallOfFame);
+      setStreak(data.streak ?? 1);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        counter,
+        legendaryCount,
+        peakCount,
+        hallOfFame,
+        streak,
+      })
+    );
+  }, [counter, legendaryCount, peakCount, hallOfFame, streak]);
 
   function copyAdvice() {
     navigator.clipboard.writeText(answer);
@@ -136,6 +180,16 @@ Confidently Wrong Since 2026.`;
     setQuestion(pickRandom(randomQuestions));
   }
 
+  function unlockAchievement(nextCounter: number) {
+    if (nextCounter === 1250) {
+      setAchievement("🏅 Achievement Unlocked: Apprentice of Bad Ideas");
+    } else if (nextCounter === 1260) {
+      setAchievement("🥔 Achievement Unlocked: Potato Investor");
+    } else if (nextCounter === 1300) {
+      setAchievement("👑 Achievement Unlocked: Supreme Idiot Tier");
+    }
+  }
+
   function recordLegendary() {
     if (!answer) return;
     setLegendaryCount((prev) => prev + 1);
@@ -156,6 +210,7 @@ Confidently Wrong Since 2026.`;
     try {
       setIsLoading(true);
       setRating("");
+      setAchievement("");
 
       const randomMessage = pickRandom(loadingMessages);
       const randomExpert = pickRandom(experts);
@@ -163,12 +218,16 @@ Confidently Wrong Since 2026.`;
       setExpert(randomExpert);
       setAnswer(randomMessage);
 
+      const promptQuestion = roastMode
+        ? `Roast me in a funny, harmless way. User context: ${question}`
+        : question;
+
       const response = await fetch("/api/stupidity", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({ question: promptQuestion }),
       });
 
       const data = await response.json();
@@ -178,8 +237,12 @@ Confidently Wrong Since 2026.`;
         return;
       }
 
+      const nextCounter = counter + 1;
+
       setAnswer(data.answer);
-      setCounter((prev) => prev + 1);
+      setCounter(nextCounter);
+      setStreak((prev) => prev + 1);
+      unlockAchievement(nextCounter);
 
       setHistory((prev) => [
         {
@@ -202,6 +265,7 @@ Confidently Wrong Since 2026.`;
     try {
       setIsLoading(true);
       setRating("");
+      setAchievement("");
       setAnswer("🎲 Generating extra stupidity...");
 
       const response = await fetch("/api/stupidity", {
@@ -227,8 +291,11 @@ Rewrite the answer based on this feedback.`,
         return;
       }
 
+      const nextCounter = counter + 1;
+
       setAnswer(data.answer);
-      setCounter((prev) => prev + 1);
+      setCounter(nextCounter);
+      unlockAchievement(nextCounter);
 
       setHistory((prev) => [
         {
@@ -251,17 +318,7 @@ Rewrite the answer based on this feedback.`,
     answer !== "🎲 Generating extra stupidity...";
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        background:
-          "radial-gradient(circle at top, #4c1d95 0%, #111827 38%, #030712 100%)",
-        color: "white",
-        textAlign: "center",
-        fontFamily: "Arial",
-        padding: "38px 20px",
-      }}
-    >
+    <main style={mainStyle}>
       <div style={logoWrap}>
         <div style={logoBadge}>NS</div>
         <div>
@@ -280,11 +337,17 @@ Rewrite the answer based on this feedback.`,
         <div style={statCard}>🧠 {counter.toLocaleString()} terrible decisions</div>
         <div style={statCard}>⭐ {legendaryCount} legendary answers</div>
         <div style={statCard}>🤡 {peakCount} peak stupidity moments</div>
+        <div style={statCard}>🔥 {streak} stupidity streak</div>
       </div>
 
       <div style={dailyCard}>
         <strong>💡 Today&apos;s Bad Idea:</strong>
         <p style={{ marginBottom: 0 }}>{dailyIdea}</p>
+      </div>
+
+      <div style={dailyCard}>
+        <strong>🏆 Worst Advice Of The Day:</strong>
+        <p style={{ marginBottom: 0 }}>{worstDaily}</p>
       </div>
 
       <textarea
@@ -296,7 +359,11 @@ Rewrite the answer based on this feedback.`,
             generateBadAdvice();
           }
         }}
-        placeholder="Ask your question..."
+        placeholder={
+          roastMode
+            ? "Tell Natural Stupidity something about yourself..."
+            : "Ask your question..."
+        }
         rows={4}
         style={textareaStyle}
       />
@@ -318,6 +385,18 @@ Rewrite the answer based on this feedback.`,
       <button onClick={surpriseMe} style={surpriseButton}>
         🎰 Surprise Me
       </button>
+
+      <button
+        onClick={() => setRoastMode((prev) => !prev)}
+        style={{
+          ...surpriseButton,
+          backgroundColor: roastMode ? "#f97316" : "#be123c",
+        }}
+      >
+        🔥 Roast Mode: {roastMode ? "ON" : "OFF"}
+      </button>
+
+      {achievement && <div style={achievementCard}>{achievement}</div>}
 
       {answer && (
         <div style={answerCard}>
@@ -382,6 +461,16 @@ Rewrite the answer based on this feedback.`,
         ))}
       </section>
 
+      <section style={sectionStyle}>
+        <h3 style={sectionTitle}>🌍 Global Stupidity Rankings</h3>
+
+        {leaderboard.map((item, index) => (
+          <div key={index} style={listCard}>
+            <strong>{index + 1}.</strong> {item}
+          </div>
+        ))}
+      </section>
+
       {history.length > 0 && (
         <section style={sectionStyle}>
           <h3 style={sectionTitle}>Recent Bad Decisions</h3>
@@ -396,12 +485,33 @@ Rewrite the answer based on this feedback.`,
         </section>
       )}
 
+      <section style={sectionStyle}>
+        <h3 style={sectionTitle}>💬 Fake Testimonials</h3>
+
+        {testimonials.map((item, index) => (
+          <div key={index} style={listCard}>
+            <p>&quot;{item.text}&quot;</p>
+            <strong>— {item.author}</strong>
+          </div>
+        ))}
+      </section>
+
       <p style={{ marginTop: "40px", fontSize: "13px", color: "#d1d5db" }}>
         Satire only. Do not follow this advice. Seriously.
       </p>
     </main>
   );
 }
+
+const mainStyle = {
+  minHeight: "100vh",
+  background:
+    "radial-gradient(circle at top, #4c1d95 0%, #111827 38%, #030712 100%)",
+  color: "white",
+  textAlign: "center" as const,
+  fontFamily: "Arial",
+  padding: "38px 20px",
+};
 
 const logoWrap = {
   display: "flex",
@@ -444,7 +554,7 @@ const tagline = {
 };
 
 const statsGrid = {
-  maxWidth: "850px",
+  maxWidth: "900px",
   margin: "24px auto",
   display: "flex",
   gap: "12px",
@@ -463,7 +573,7 @@ const statCard = {
 
 const dailyCard = {
   maxWidth: "760px",
-  margin: "22px auto",
+  margin: "16px auto",
   padding: "16px",
   borderRadius: "16px",
   backgroundColor: "rgba(76, 29, 149, 0.35)",
@@ -500,6 +610,7 @@ const mainButton = {
 
 const surpriseButton = {
   marginTop: "22px",
+  marginRight: "10px",
   padding: "16px 24px",
   fontSize: "18px",
   fontWeight: "bold",
@@ -520,6 +631,17 @@ const answerCard = {
   border: "1px solid rgba(167, 139, 250, 0.4)",
   boxShadow: "0 24px 55px rgba(0,0,0,0.4)",
   backdropFilter: "blur(10px)",
+};
+
+const achievementCard = {
+  maxWidth: "760px",
+  margin: "24px auto",
+  padding: "16px",
+  borderRadius: "16px",
+  backgroundColor: "rgba(249, 115, 22, 0.22)",
+  border: "1px solid rgba(249, 115, 22, 0.55)",
+  color: "#fed7aa",
+  fontWeight: "bold",
 };
 
 const smallButton = {
