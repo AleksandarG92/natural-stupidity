@@ -109,6 +109,7 @@ export default function Home() {
   const [achievement, setAchievement] = useState("");
   const [roastMode, setRoastMode] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   const [dailyIdea, setDailyIdea] = useState("");
   const [worstDaily, setWorstDaily] = useState("");
@@ -120,6 +121,7 @@ export default function Home() {
   useEffect(() => {
     setDailyIdea(pickRandom(dailyBadIdeas));
     setWorstDaily(pickRandom(worstAdviceOfTheDay));
+
     const saved = localStorage.getItem(STORAGE_KEY);
 
     if (saved) {
@@ -131,6 +133,13 @@ export default function Home() {
       setHallOfFame(data.hallOfFame ?? initialHallOfFame);
       setStreak(data.streak ?? 1);
     }
+
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   useEffect(() => {
@@ -318,36 +327,89 @@ Rewrite the answer based on this feedback.`,
 
   return (
     <main
-  style={{
-    ...mainStyle,
-    background: darkMode
-      ? "radial-gradient(circle at top, #4c1d95 0%, #111827 38%, #030712 100%)"
-      : "linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%)",
-    color: darkMode ? "white" : "#111827",
-  }}
->
+      style={{
+        ...mainStyle,
+        padding: isMobile ? "24px 16px" : "38px 20px",
+        background: darkMode
+          ? "radial-gradient(circle at top, #4c1d95 0%, #111827 38%, #030712 100%)"
+          : "linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%)",
+        color: darkMode ? "white" : "#111827",
+      }}
+    >
       <button
-  onClick={() => setDarkMode((prev) => !prev)}
-  style={themeButton}
->
-  {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-</button>
-      <div style={logoWrap}>
-        <div style={logoBadge}>NS</div>
+        onClick={() => setDarkMode((prev) => !prev)}
+        style={{
+          ...themeButton,
+          position: isMobile ? "static" : "fixed",
+          display: "block",
+          marginLeft: isMobile ? "auto" : undefined,
+          marginBottom: isMobile ? "18px" : undefined,
+          transform: isMobile ? "scale(0.9)" : "none",
+        }}
+      >
+        {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+      </button>
+
+      <div
+        style={{
+          ...logoWrap,
+          flexDirection: isMobile ? "column" : "row",
+          gap: isMobile ? "14px" : "18px",
+        }}
+      >
+        <div
+          style={{
+            ...logoBadge,
+            width: isMobile ? "92px" : "110px",
+            height: isMobile ? "92px" : "110px",
+            fontSize: isMobile ? "36px" : "42px",
+            borderRadius: isMobile ? "28px" : "32px",
+          }}
+        >
+          NS
+        </div>
+
         <div>
-          <h1 style={title}>Natural Stupidity™</h1>
-          <p style={tagline}>
+          <h1
+            style={{
+              ...title,
+              fontSize: isMobile ? "54px" : "72px",
+              lineHeight: isMobile ? "1.05" : "1.1",
+              letterSpacing: isMobile ? "-2px" : "-3px",
+            }}
+          >
+            Natural Stupidity™
+          </h1>
+
+          <p
+            style={{
+              ...tagline,
+              color: darkMode ? "#ddd6fe" : "#6d28d9",
+              opacity: 1,
+            }}
+          >
             The internet&apos;s most confident source of terrible advice.
           </p>
         </div>
       </div>
 
-      <p style={{ fontSize: "18px", marginTop: "25px" }}>
+      <p
+        style={{
+          fontSize: isMobile ? "17px" : "18px",
+          marginTop: "25px",
+          lineHeight: "1.55",
+          maxWidth: "620px",
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
+      >
         Ask anything. Receive terrible advice with dangerous confidence.
       </p>
 
       <div style={statsGrid}>
-        <div style={statCard}>🧠 {counter.toLocaleString()} terrible decisions</div>
+        <div style={statCard}>
+          🧠 {counter.toLocaleString()} terrible decisions
+        </div>
         <div style={statCard}>⭐ {legendaryCount} legendary answers</div>
         <div style={statCard}>🤡 {peakCount} peak stupidity moments</div>
         <div style={statCard}>🔥 {streak} stupidity streak</div>
@@ -379,10 +441,11 @@ Rewrite the answer based on this feedback.`,
         }
         rows={4}
         style={{
-  ...textareaStyle,
-  backgroundColor: darkMode ? "#111827" : "#ffffff",
-  color: darkMode ? "white" : "#111827",
-}}
+          ...textareaStyle,
+          width: isMobile ? "92%" : "80%",
+          backgroundColor: darkMode ? "#111827" : "#ffffff",
+          color: darkMode ? "white" : "#111827",
+        }}
       />
 
       <br />
@@ -392,6 +455,8 @@ Rewrite the answer based on this feedback.`,
         disabled={!question.trim() || isLoading}
         style={{
           ...mainButton,
+          width: isMobile ? "92%" : undefined,
+          marginRight: isMobile ? 0 : "10px",
           backgroundColor: isLoading ? "#6b7280" : "#8b5cf6",
           cursor: isLoading ? "not-allowed" : "pointer",
         }}
@@ -399,7 +464,14 @@ Rewrite the answer based on this feedback.`,
         {isLoading ? "Please wait badly..." : "Generate Bad Advice"}
       </button>
 
-      <button onClick={surpriseMe} style={surpriseButton}>
+      <button
+        onClick={surpriseMe}
+        style={{
+          ...surpriseButton,
+          width: isMobile ? "92%" : undefined,
+          marginRight: isMobile ? 0 : "10px",
+        }}
+      >
         🎰 Surprise Me
       </button>
 
@@ -407,6 +479,8 @@ Rewrite the answer based on this feedback.`,
         onClick={() => setRoastMode((prev) => !prev)}
         style={{
           ...surpriseButton,
+          width: isMobile ? "92%" : undefined,
+          marginRight: isMobile ? 0 : "10px",
           backgroundColor: roastMode ? "#f97316" : "#be123c",
         }}
       >
@@ -416,13 +490,15 @@ Rewrite the answer based on this feedback.`,
       {achievement && <div style={achievementCard}>{achievement}</div>}
 
       {answer && (
-        <div style={{
-  ...answerCard,
-  backgroundColor: darkMode
-    ? "rgba(31,41,55,0.82)"
-    : "rgba(255,255,255,0.92)",
-  color: darkMode ? "white" : "#111827",
-}}>
+        <div
+          style={{
+            ...answerCard,
+            backgroundColor: darkMode
+              ? "rgba(31,41,55,0.82)"
+              : "rgba(255,255,255,0.92)",
+            color: darkMode ? "white" : "#111827",
+          }}
+        >
           <strong>{expert} says:</strong>
           <p style={{ fontSize: "19px", lineHeight: "1.55" }}>{answer}</p>
 
@@ -520,50 +596,45 @@ Rewrite the answer based on this feedback.`,
       </section>
 
       <footer style={footerStyle}>
-  <p>© 2026 Natural Stupidity™. All rights reserved.</p>
+        <p>© 2026 Natural Stupidity™. All rights reserved.</p>
 
-  <p>Satire only. Do not follow any advice generated on this website.</p>
+        <p>Satire only. Do not follow any advice generated on this website.</p>
 
-  <p>
-    Made with questionable intelligence 🧠
-  </p>
+        <p>Made with questionable intelligence 🧠</p>
 
-  <div style={footerLinksStyle}>
-  <a href="/about" style={footerLinkStyle}>
-    About
-  </a>
+        <div style={footerLinksStyle}>
+          <Link href="/about" style={footerLinkStyle}>
+            About
+          </Link>
 
-  <span>•</span>
+          <span>•</span>
 
-  <a href="/privacy" style={footerLinkStyle}>
-    Privacy Policy
-  </a>
+          <Link href="/privacy" style={footerLinkStyle}>
+            Privacy Policy
+          </Link>
 
-  <span>•</span>
+          <span>•</span>
 
-  <a href="/terms" style={footerLinkStyle}>
-    Terms of Use
-  </a>
+          <Link href="/terms" style={footerLinkStyle}>
+            Terms of Use
+          </Link>
 
-  <span>•</span>
+          <span>•</span>
 
-  <Link href="/contact" style={footerLinkStyle}>
-  Contact
-</Link>
-</div>
-</footer>
+          <Link href="/contact" style={footerLinkStyle}>
+            Contact
+          </Link>
+        </div>
+      </footer>
     </main>
   );
 }
 
 const mainStyle = {
   minHeight: "100vh",
-  background:
-    "radial-gradient(circle at top, #4c1d95 0%, #111827 38%, #030712 100%)",
   color: "white",
   textAlign: "center" as const,
   fontFamily: "Arial",
-  padding: "38px 20px",
 };
 
 const logoWrap = {
@@ -600,7 +671,6 @@ const title = {
 };
 
 const tagline = {
-  color: "#ddd6fe",
   marginTop: "8px",
   fontWeight: "bold",
   fontSize: "18px",
@@ -616,12 +686,14 @@ const statsGrid = {
 };
 
 const statCard = {
-  padding: "12px 16px",
+  padding: "12px 18px",
   backgroundColor: "rgba(17, 24, 39, 0.72)",
   border: "1px solid rgba(167,139,250,0.28)",
   borderRadius: "999px",
-  color: "#ddd6fe",
+  color: "#f5f3ff",
   fontWeight: "bold",
+  minWidth: "230px",
+  textAlign: "center" as const,
 };
 
 const dailyCard = {
@@ -635,14 +707,11 @@ const dailyCard = {
 };
 
 const textareaStyle = {
-  width: "80%",
   maxWidth: "760px",
   padding: "18px",
   fontSize: "18px",
   borderRadius: "18px",
   marginTop: "12px",
-  backgroundColor: "#111827",
-  color: "white",
   border: "2px solid #a78bfa",
   outline: "none",
   boxShadow: "0 0 26px rgba(167, 139, 250, 0.55)",
@@ -679,7 +748,6 @@ const answerCard = {
   maxWidth: "760px",
   margin: "34px auto",
   padding: "26px",
-  backgroundColor: "rgba(31, 41, 55, 0.82)",
   borderRadius: "22px",
   border: "1px solid rgba(167, 139, 250, 0.4)",
   boxShadow: "0 24px 55px rgba(0,0,0,0.4)",
@@ -738,11 +806,14 @@ const sectionTitle = {
 
 const listCard = {
   marginTop: "12px",
-  padding: "14px",
-  backgroundColor: "rgba(17, 24, 39, 0.8)",
-  borderRadius: "12px",
-  border: "1px solid rgba(255,255,255,0.08)",
+  padding: "16px",
+  backgroundColor: "rgba(17, 24, 39, 0.82)",
+  borderRadius: "16px",
+  border: "1px solid rgba(255,255,255,0.1)",
+  color: "white",
+  lineHeight: "1.55",
 };
+
 const footerStyle = {
   maxWidth: "900px",
   margin: "70px auto 0",
@@ -752,8 +823,8 @@ const footerStyle = {
   fontSize: "14px",
   textAlign: "center" as const,
 };
+
 const themeButton = {
-  position: "fixed" as const,
   top: "18px",
   right: "18px",
   zIndex: 10,
@@ -765,6 +836,7 @@ const themeButton = {
   cursor: "pointer",
   fontWeight: "bold",
 };
+
 const footerLinksStyle = {
   marginTop: "12px",
   display: "flex",
