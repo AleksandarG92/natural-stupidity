@@ -52,7 +52,7 @@ export const metadata: Metadata = {
 
     images: [
       {
-        url: "/opengraph-image",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Natural Stupidity™",
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     description:
       "The funniest AI-powered bad advice generator on the internet. Ask anything and receive hilariously terrible advice with dangerous confidence.",
 
-    images: ["/opengraph-image"],
+    images: ["/og-image.png"],
   },
 
   metadataBase: new URL("https://www.naturalstupidityapp.com"),
