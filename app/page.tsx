@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const loadingMessages = [
   "🧠 Thinking badly...",
@@ -60,7 +60,7 @@ type HistoryItem = {
   answer: string;
   expert: string;
 };
-
+const STORAGE_KEY = "natural-stupidity-stats";
 export default function Home() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
@@ -75,7 +75,30 @@ export default function Home() {
   const [dailyIdea] = useState(
     dailyBadIdeas[Math.floor(Math.random() * dailyBadIdeas.length)]
   );
+useEffect(() => {
+  const saved = localStorage.getItem(STORAGE_KEY);
 
+  if (saved) {
+    const data = JSON.parse(saved);
+
+    setCounter(data.counter ?? 1247);
+    setLegendaryCount(data.legendaryCount ?? 73);
+    setPeakCount(data.peakCount ?? 21);
+    setHallOfFame(data.hallOfFame ?? initialHallOfFame);
+  }
+}, []);
+
+useEffect(() => {
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({
+      counter,
+      legendaryCount,
+      peakCount,
+      hallOfFame,
+    })
+  );
+}, [counter, legendaryCount, peakCount, hallOfFame]);
   function pickRandom<T>(items: T[]) {
     return items[Math.floor(Math.random() * items.length)];
   }
