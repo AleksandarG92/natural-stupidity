@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     description:
       "The funniest AI-powered bad advice generator on the internet. Ask anything and receive hilariously terrible advice with dangerous confidence.",
 
-    url: "https://natural-stupidity.vercel.app",
+    url: "https://www.naturalstupidityapp.com",
 
     siteName: "Natural Stupidity™",
 
@@ -74,9 +74,7 @@ export const metadata: Metadata = {
     images: ["/opengraph-image"],
   },
 
-  metadataBase: new URL(
-    "https://natural-stupidity.vercel.app"
-  ),
+  metadataBase: new URL("https://www.naturalstupidityapp.com"),
 };
 
 export default function RootLayout({
