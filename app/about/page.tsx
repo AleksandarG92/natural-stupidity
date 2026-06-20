@@ -76,12 +76,12 @@ export default function AboutPage() {
         <h2 style={subHeadingStyle}>Contact</h2>
 
         <p>
-          Questions, feedback, or aggressively bad ideas? Contact us at{" "}
-          <a href="mailto:contact@naturalstupidityapp.com" style={linkStyle}>
-            contact@naturalstupidityapp.com
-          </a>
-          .
-        </p>
+  Questions, feedback, or aggressively bad ideas? Use the{" "}
+  <a href="/contact" style={linkStyle}>
+    Contact page
+  </a>
+  .
+</p>
 
         <p style={{ marginTop: "30px" }}>
           <a href="/" style={linkStyle}>

@@ -28,6 +28,11 @@ export default function TermsPage() {
     marginBottom: "10px",
     color: "#c4b5fd",
   };
+  const linkStyle = {
+  color: "#c4b5fd",
+  fontWeight: "bold",
+  textDecoration: "none",
+};
 
   return (
     <main style={pageStyle}>
@@ -79,10 +84,12 @@ export default function TermsPage() {
         <h2 style={subHeadingStyle}>Contact</h2>
 
         <p>
-          For questions, contact:
-          {" "}
-          contact@naturalstupidityapp.com
-        </p>
+  For questions regarding these Terms, please use the{" "}
+  <a href="/contact" style={linkStyle}>
+    Contact page
+  </a>
+  .
+</p>
       </div>
     </main>
   );

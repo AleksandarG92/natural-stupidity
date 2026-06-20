@@ -29,22 +29,29 @@ export default function PrivacyPage() {
     color: "#c4b5fd",
   };
 
+  const linkStyle = {
+    color: "#c4b5fd",
+    fontWeight: "bold",
+    textDecoration: "none",
+  };
+
   return (
     <main style={pageStyle}>
       <div style={cardStyle}>
         <h1 style={headingStyle}>Privacy Policy</h1>
+
         <a
-  href="/"
-  style={{
-    color: "#a855f7",
-    textDecoration: "none",
-    display: "inline-block",
-    marginBottom: "20px",
-    fontWeight: "bold",
-  }}
->
-  ← Back to Home
-</a>
+          href="/"
+          style={{
+            color: "#a855f7",
+            textDecoration: "none",
+            display: "inline-block",
+            marginBottom: "20px",
+            fontWeight: "bold",
+          }}
+        >
+          ← Back to Home
+        </a>
 
         <p>Last updated: June 2026</p>
 
@@ -78,9 +85,11 @@ export default function PrivacyPage() {
         <h2 style={subHeadingStyle}>Contact</h2>
 
         <p>
-          For questions regarding this policy contact:
-          {" "}
-          contact@naturalstupidityapp.com
+          For privacy-related questions, please use the{" "}
+          <a href="/contact" style={linkStyle}>
+            Contact page
+          </a>
+          .
         </p>
       </div>
     </main>

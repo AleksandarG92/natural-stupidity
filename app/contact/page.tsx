@@ -5,8 +5,7 @@ export default function ContactPage() {
     <main
       style={{
         minHeight: "100vh",
-        background:
-          "linear-gradient(135deg,#0f0c29,#302b63,#24243e)",
+        background: "linear-gradient(135deg,#0f0c29,#302b63,#24243e)",
         color: "white",
         padding: "40px 20px",
       }}
@@ -32,16 +31,16 @@ export default function ContactPage() {
           ← Back to Home
         </Link>
 
-        <h1 style={{ marginTop: "25px" }}>
-          Contact Us
-        </h1>
+        <h1 style={{ marginTop: "25px" }}>Contact Us</h1>
 
         <p>
-          Have a terrible idea? Found a bug?
-          Want to share your worst life decision?
+          Have a terrible idea? Found a bug? Want to share your worst life
+          decision?
         </p>
 
         <form
+          action="https://formspree.io/f/xeewybwj"
+          method="POST"
           style={{
             display: "flex",
             flexDirection: "column",
@@ -51,7 +50,9 @@ export default function ContactPage() {
         >
           <input
             type="text"
+            name="name"
             placeholder="Your Name"
+            required
             style={{
               padding: "14px",
               borderRadius: "10px",
@@ -61,7 +62,9 @@ export default function ContactPage() {
 
           <input
             type="email"
+            name="email"
             placeholder="Your Email"
+            required
             style={{
               padding: "14px",
               borderRadius: "10px",
@@ -70,8 +73,10 @@ export default function ContactPage() {
           />
 
           <textarea
+            name="message"
             placeholder="Message"
             rows={6}
+            required
             style={{
               padding: "14px",
               borderRadius: "10px",
@@ -85,8 +90,7 @@ export default function ContactPage() {
               padding: "14px",
               borderRadius: "10px",
               border: "none",
-              background:
-                "linear-gradient(90deg,#ff6ec4,#7873f5)",
+              background: "linear-gradient(90deg,#ff6ec4,#7873f5)",
               color: "white",
               fontWeight: "bold",
               cursor: "pointer",
