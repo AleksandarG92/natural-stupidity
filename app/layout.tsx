@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,14 +14,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.naturalstupidityapp.com"),
+
   title: "Natural Stupidity™ | AI Bad Advice Generator",
 
   description:
     "The funniest AI-powered bad advice generator on the internet. Ask anything and receive hilariously terrible advice with dangerous confidence.",
-
-  icons: {
-    icon: "/favicon.ico",
-  },
 
   keywords: [
     "AI",
@@ -43,6 +42,10 @@ export const metadata: Metadata = {
   ],
 
   creator: "Aleksandar Gojković",
+
+  alternates: {
+    canonical: "https://www.naturalstupidityapp.com",
+  },
 
   openGraph: {
     title: "Natural Stupidity™ | AI Bad Advice Generator",
@@ -77,8 +80,6 @@ export const metadata: Metadata = {
 
     images: ["/og-image.png"],
   },
-
-  metadataBase: new URL("https://www.naturalstupidityapp.com"),
 };
 
 export default function RootLayout({
@@ -91,7 +92,11 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+
+        <GoogleAnalytics gaId="G-89GMTK1VGK" />
+      </body>
     </html>
   );
 }
