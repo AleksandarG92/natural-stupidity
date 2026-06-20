@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const loadingMessages = [
@@ -158,7 +159,7 @@ Q: ${question}
 A: ${answer}
 
 Try it yourself:
-https://natural-stupidity.vercel.app
+https://www.naturalstupidityapp.com
 
 Confidently Wrong Since 2026.`;
 
@@ -166,7 +167,7 @@ Confidently Wrong Since 2026.`;
       await navigator.share({
         title: "Natural Stupidity™",
         text,
-        url: "https://natural-stupidity.vercel.app",
+        url: "https://www.naturalstupidityapp.com",
       });
     } else {
       await navigator.clipboard.writeText(text);
@@ -521,11 +522,35 @@ Rewrite the answer based on this feedback.`,
       <footer style={footerStyle}>
   <p>© 2026 Natural Stupidity™. All rights reserved.</p>
 
-  <p>Satire only. Do not follow this advice. Seriously.</p>
+  <p>Satire only. Do not follow any advice generated on this website.</p>
 
   <p>
     Made with questionable intelligence 🧠
   </p>
+
+  <div style={footerLinksStyle}>
+  <a href="/about" style={footerLinkStyle}>
+    About
+  </a>
+
+  <span>•</span>
+
+  <a href="/privacy" style={footerLinkStyle}>
+    Privacy Policy
+  </a>
+
+  <span>•</span>
+
+  <a href="/terms" style={footerLinkStyle}>
+    Terms of Use
+  </a>
+
+  <span>•</span>
+
+  <Link href="/contact" style={footerLinkStyle}>
+  Contact
+</Link>
+</div>
 </footer>
     </main>
   );
@@ -738,5 +763,18 @@ const themeButton = {
   backgroundColor: "rgba(17, 24, 39, 0.72)",
   color: "white",
   cursor: "pointer",
+  fontWeight: "bold",
+};
+const footerLinksStyle = {
+  marginTop: "12px",
+  display: "flex",
+  justifyContent: "center",
+  gap: "10px",
+  flexWrap: "wrap" as const,
+};
+
+const footerLinkStyle = {
+  color: "#c4b5fd",
+  textDecoration: "none",
   fontWeight: "bold",
 };
